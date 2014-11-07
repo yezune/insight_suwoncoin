@@ -1,0 +1,80 @@
+<div data-ng-include src="'/views/includes/connection.html'"></div>
+<section data-ng-controller="AddressController" data-ng-init="findOne()">
+  <div class="secondary_navbar hidden-xs hidden-sm" scroll data-ng-class="{'hidden': !secondaryNavbar}" data-ng-show="address.addrStr" data-ng-init="hideSNavbar=0">
+    <div class="container" data-ng-if="!hideSNavbar">
+      <div class="col-md-8 text-left">
+          <h3>지갑 주소</h3> {{address.addrStr}}
+          <span class="btn-copy" clip-copy="address.addrStr"></span>
+      </div>
+      <div class="col-md-4">
+        <span class="txvalues txvalues-primary"><strong>잔액</strong> {{$root.currency.getConvertion(address.balance) || address.balance + ' SWC' }}</span>
+      </div>
+    </div>
+    <div class="hide_snavbar">
+      <a href="#" data-ng-click="hideSNavbar=!hideSNavbar">
+        <span data-ng-show="hideSNavbar"><span class="text-muted glyphicon glyphicon-chevron-down"></span></span>
+        <span data-ng-show="!hideSNavbar"><span class="text-muted glyphicon glyphicon-chevron-up"></span></span>
+      </a>
+    </div>
+  </div>
+  <h1>지갑주소 <small data-ng-show="address.addrStr">{{$root.currency.getConvertion(address.balance) || address.balance + ' SWC'}}</small></h1>
+  <div class="text-muted" data-ng-if="!address.addrStr">
+    <span>주소 정보를 불러오는 중입니다. <span class="loader-gif"></span>
+  </div>
+  <div data-ng-if="address.addrStr">
+    <div class="well well-sm ellipsis">
+      <strong>주소 : </strong> 
+      <span class="text-muted">{{address.addrStr}}</span>
+      <span class="btn-copy" clip-copy="address.addrStr"></span>
+    </div>
+    <h2>요약 <small>confirmed</small></h2>
+    <div class="row" data-ng-hide="!address.addrStr">
+      <div class="col-md-10">
+        <table class="table">
+          <tbody>
+          <tr>
+            <td><strong>받은 총액</strong></td>
+            <td class="ellipsis text-right">{{$root.currency.getConvertion(address.totalReceived) || address.totalReceived + ' SWC'}}</td>
+          </tr>
+          <tr>
+            <td><strong>보내준 총액</strong></td>
+            <td class="ellipsis text-right">{{$root.currency.getConvertion(address.totalSent) || address.totalSent + ' SWC'}}</td>
+          </tr>
+          <tr>
+            <td><strong>잔액</strong></td>
+            <td class="ellipsis text-right">{{$root.currency.getConvertion(address.balance) || address.balance + ' SWC'}}</td>
+          </tr>
+          <tr>
+            <td><strong>거래량 번호</strong></td>
+            <td class="ellipsis text-right">{{address.txApperances}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-2 text-center">
+        <qrcode size="160" data="{{address.addrStr}}"></qrcode>
+      </div>
+    </div>
+    <div data-ng-show="address.unconfirmedTxApperances">
+      <h3>Unconfirmed</h3>
+      <table class="table">
+        <tbody>
+        <tr>
+          <td class="small">Unconfirmed Txs Balance</td>
+          <td class="address ellipsis text-right">{{$root.currency.getConvertion(address.unconfirmedBalance)}}</td>
+        </tr>
+        <tr>
+          <td class="small">No. Transactions</td>
+          <td class="address ellipsis text-right">{{address.unconfirmedTxApperances}}</td>
+        </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div data-ng-if="address.addrStr" data-ng-controller="transactionsController" data-ng-init="load('address')">
+    <h2>거래 내용</h2>
+    <div data-ng-include src="'/views/transaction/list.html'" when-scrolled="loadMore()"></div>
+  </div>
+</section>
+
